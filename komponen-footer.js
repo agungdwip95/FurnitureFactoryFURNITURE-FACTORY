@@ -3,7 +3,7 @@ Vue.component('komponen-footer',{
 
     <footer>
         <div class="container text-white text-center">
-            <small class="text-white fw-bold">Copyright &copy; 2022 - Agung Dwi Prasetiyo & Ibrahim Sawitro Yuda</a></small>
+            <small>Copyright &copy; 2022 - <a href="https://github.com/agungdwip95" class="text-white fw-bold">Agung Dwi Prasetiyo</a></small>
         </div>
     </footer>
 		
