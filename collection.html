@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  	<title>COLLECTION</title>
+  	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+  	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body style="background-image: url('https://wallpapercave.com/wp/wp3157716.jpg')">
+
+	<!-- navbar -->
+  <div id="header">
+      <komponen-header></komponen-header>
+  </div>
+    <!-- akhir navbar -->
+
+  <!-- <h1 align="center" style="margin-top: 6rem; color: white;">PRODUK</h1> -->
+
+  <div class="container" id="konten" style="margin-top: 6rem;">
+
+    <!-- button keranjang -->
+    <button class="btn position-relative float-end" @click="tampilkanKeranjang = true">
+            <i class = "fa fa-shopping-cart" style="color: #FFFFFF; "> Keranjang</i>
+            <span class = "position-absolute top-0 start-100 translate-middle badge bg-primary">{{ keranjang.items.length }} </span>
+    </button>
+     <!-- akhir button keranjang -->
+
+
+    <div v-if="!tampilkanKeranjang">
+
+      <br><input type="text" class="form-control mt-4" v-model="pencarian" placeholder="ketikkan kata kunci (dengan huruf kecil)"><br> 
+      
+      <div class="row row-cols-1 row-cols-md-2 g-4 ps-2">  
+        <div class="card text-dark bg-white border-2 border-dark rounded" style="width: 14rem;" v-for="(produk, index) of filterProduks" :key="index">
+        <img width=200 :src="produk.link_gambar" />
+          <div class="card-body ">
+            <h5 class="card-title"><strong>{{ produk.nama }}</strong></h5>
+            <p class="card-text">{{ produk.deskripsi }} <br><br>
+                                 <strong>{{ produk.harga | format_rupiah }}</strong><br>
+                                         Stok: {{ produk.stok_tersedia }} <br> 
+                                 <small>Kategori: {{ produk.kategori }}</small>
+            </p>
+            <button class="btn btn-success d-grid gap-2"  @click="tambahkanProdukKeKeranjang(produk)" :disabled="produk.stok_tersedia == 0">Beli</button>
+          </div>
+        </div>
+      </div>  
+
+    </div>
+
+    <div v-else>
+      <h1 class="text-white">Keranjang</h1>
+      <table v-if="keranjang.items.length > 0" class="table table-dark table-striped">
+        <thead>
+          <tr>
+            <th>Produk</th>
+            <th>Jumlah</th>
+            <th>Harga</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in keranjang.items">
+            <td>{{ item.produk.nama }}</td>
+            <td>
+              {{ item.kuantitas }} &nbsp;
+              <button class="btn btn-success" @click="menambahKuantitas(item)" :disabled="item.produk.stok_tersedia == 0">+</button>
+              <button class="btn btn-danger" @click="mengurangiKuantitas(item)">-</button>
+            </td>
+            <td>{{ item.kuantitas * item.produk.harga | format_rupiah }}</td>
+          </tr>
+          
+          <tr>
+            <td class="text-right" colspan="2">
+              <strong>Subtotal</strong>
+            </td>
+            
+            <td>{{ keranjangTotal | format_rupiah }}</td>
+          </tr>
+          
+          <tr>
+            <td class="text-right" colspan="2">
+              <strong>Ongkos Kirim (Seluruh Indonesia)</strong>
+            </td>
+            
+            <td>{{ ongkirJumlah | format_rupiah }}</td>
+          </tr>
+          
+          <tr>
+            <td class="text-right" colspan="2">
+              <strong>Total Harga</strong>
+            </td>
+            
+            <td>{{ keranjangTotal + ongkirJumlah | format_rupiah }}</td>
+          </tr>
+          
+          <tr>
+            <td colspan="2"></td>
+            <td><button class="btn btn-success" @click="bayar">Bayar</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      
+      <p v-else class="text-white">Keranjang anda saat ini kosong. <a href="collection.html" class="btn btn-secondary btn-sm">Pilih Produk</a></p>
+          
+        
+    </div>
+
+  </div>
+
+  <div id="footer">
+      <komponen-footer></komponen-footer>
+  </div>
+
+    <script type="text/javascript">
+      Vue.component('komponen-header', {
+      template: `<nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-image: url('https://www.wallpaperuse.com/wallp/53-537685_m.jpg')">
+      <div class="container">
+        <h1><a class="navbar-brand" href="home.html">FURNITURE FACTORY <i class="fa fa-bolt" id="petir"></i></a></h1>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="home.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="brand.html">Brand</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="collection.html">Collection</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>`
+    })
+      new Vue({ el: '#header' })
+      new Vue({
+        el: '#konten',
+        data: {
+          pencarian: '',
+          tampilkanKeranjang: false,
+          keranjang: {
+            items: []
+          },
+          produks : [
+                  {
+                id: 1,
+                nama: 'NISSE',
+                harga: 950000,
+                deskripsi: 'Kursi lipat, hitam',
+                kategori: 'Kursi',
+                stok_tersedia: 755,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/281/0728163_PE736118_S4.jpg'
+              },
+              {
+                id: 2,
+                nama: 'BRIMNES',
+                harga: 5097000,
+                deskripsi: 'Penyimpanan tv, hitam',
+                kategori: 'Meja TV',
+                stok_tersedia: 800,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/241/0724178_PE734352_S4.jpg'
+              },
+              {
+                id: 3,
+                nama: 'INGARED',
+                harga: 199000,
+                deskripsi: 'Lampu meja, krem',
+                kategori: 'Lampu Meja',
+                stok_tersedia: 550,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/093/0609351_PE684472_S4.jpg'
+              },
+              {
+                id: 4,
+                nama: 'DYRGRIP',
+                harga: 69900,
+                deskripsi: 'Gelas kaca bening',
+                kategori: 'Gelas Minum',
+                stok_tersedia: 400,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/132/0713234_PE729344_S4.jpg'
+              },
+              {
+                id: 5,
+                nama: 'MUSKEN',
+                harga: 4999000,
+                deskripsi: 'Lemari, putih',
+                kategori: 'Lemari Pakaian',
+                stok_tersedia: 650,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/903/0590338_PE673833_S4.jpg'
+              },
+              {
+                id: 6,
+                nama: 'KNODD',
+                harga: 299000,
+                deskripsi: 'Tempat sampah, abu',
+                kategori: 'Tempat Sampah',
+                stok_tersedia: 430,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/111/0711156_PE728024_S4.jpg'
+              },
+              {
+                id: 7,
+                nama: 'HEMLAGAD',
+                harga: 199000,
+                deskripsi: 'Wajan, hitam',
+                kategori: 'Wajan',
+                stok_tersedia: 200,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/891/0789104_PE763825_S4.jpg'
+              },
+              {
+                id: 8,
+                nama: 'LANDSKRONA',
+                harga: 7095000,
+                deskripsi: 'Sofa 2 dudukan, abu',
+                kategori: 'Sofa',
+                stok_tersedia: 10,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/021/0602101_PE680170_S4.jpg'
+              },
+              {
+                id: 9,
+                nama: 'SONGESAND',
+                harga: 3999000,
+                deskripsi: 'Lemari, cokelat',
+                kategori: 'Lemari Pakaian',
+                stok_tersedia: 320,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/551/0555114_PE660180_S4.jpg'
+              },
+              {
+                id: 10,
+                nama: 'FINNSTARR',
+                harga: 299000,
+                deskripsi: 'Lampu kerja, hitam',
+                kategori: 'Lampu Meja',
+                stok_tersedia: 270,
+                link_gambar: 'https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/images/657/0765770_PE753631_S4.jpg'
+              }
+            ]
+            },
+            computed: { 
+                    filterProduks() {
+                      return this.produks.filter((produk)=>{
+                         return produk.nama.toLowerCase().includes(this.pencarian);
+                    })
+                    },
+                    keranjangTotal: function() {
+                      var total = 0;
+                      this.keranjang.items.forEach(function(item) {
+                        total += item.kuantitas * item.produk.harga;
+                      });
+                      return total;
+                    },
+                    ongkirJumlah: function() {
+                      return 20000;
+                    }
+                },
+                filters: {
+                  format_rupiah: function(value) {
+                    var formatter = new Intl.NumberFormat("en-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      minimumFractionDigits: 0
+                    });
+                    return formatter.format(value);
+                  }
+                },
+                methods:{
+                  hapusItemDariKeranjang: function(cartItem) {
+                    var index = this.keranjang.items.indexOf(cartItem);
+                    
+                    if (index !== -1) {
+                      this.keranjang.items.splice(index, 1);
+                    }
+                  },
+                  bayar: function() {
+                    if (confirm('Apakah anda yakin ingin membeli produk ini?')) {
+                      this.keranjang.items.forEach(function(item) {
+                        item.produk.stok_tersedia += item.kuantitas;
+                      });
+
+                      alert('Pembayaran Berhasil');
+                      this.keranjang.items = [];
+                    }
+                  },
+                  tambahkanProdukKeKeranjang: function(produk) {
+                    var cartItem = this.dapatkanItemKeranjang(produk);
+                    
+                    if (cartItem != null) {
+                      cartItem.kuantitas++;
+                    } else {
+                      this.keranjang.items.push({
+                        produk: produk,
+                        kuantitas: 1
+                      });
+                    }
+                    produk.stok_tersedia--;
+                  },
+                  menambahKuantitas: function(cartItem) {
+                    cartItem.produk.stok_tersedia--;
+                    cartItem.kuantitas++;
+                  },
+                  mengurangiKuantitas: function(cartItem) {
+                    cartItem.kuantitas--;
+                    cartItem.produk.stok_tersedia++;
+                    if (cartItem.kuantitas == 0) {
+                      this.hapusItemDariKeranjang(cartItem);
+                    }
+                  },
+                  dapatkanItemKeranjang: function(produk) {
+                    for (var i = 0; i < this.keranjang.items.length; i++) {
+                      if (this.keranjang.items[i].produk.id === produk.id) {
+                        return this.keranjang.items[i];
+                      }
+                    }
+                    
+                    return null;
+                  },
+                }
+      })
+    </script>
+
+    <script type="text/javascript" src="komponen-footer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>

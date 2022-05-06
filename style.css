@@ -1,0 +1,46 @@
+#petir {
+	text-transform: uppercase;
+	/*letter-spacing: 10px;*/
+	background: linear-gradient(90deg, red, yellow, green);
+	-webkit-background-clip: text;
+	background-size: 1000%;
+	transform-origin: right;
+	color: transparent;
+	animation: animate 15s linear infinite;
+}
+
+@keyframes animate {
+	0% {
+		background-position: 100% 0%;
+	}
+	50% {
+		background-position: 0% 100%;
+	}
+	100% {
+		background-position: 100% 0%;
+	}
+}
+
+.load span{
+	text-transform: uppercase;
+	letter-spacing: 7px;
+	font-size: 50px;
+	color: #333;
+	animation: anim 7s linear infinite;
+	animation-delay: calc(0.5s * var(--i));
+}
+
+@keyframes anim {
+	0%{
+		color: white;
+		text-shadow: 0 0 10px #28B463,
+					0 0 20px #28B463,
+					0 0 40px #28B463,
+					0 0 80px #28B463,
+					0 0 100px #28B463;
+	}
+	100%{
+		color: #333;
+		text-shadow: none;
+	}
+}
